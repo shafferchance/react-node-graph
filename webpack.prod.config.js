@@ -9,7 +9,7 @@ var path = require('path');
 var config = {
   devtool: 'sourcemap',
   entry: {
-    index: './index-hooks.js'
+    index: './index.js'
   },
   output: {
     path: path.join(__dirname, 'build'),
@@ -17,7 +17,8 @@ var config = {
     filename: 'index.js',
     sourceMapFilename: 'index.map',
     library: 'ReactNodeGraph',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    globalObject: 'this'
   },
   module: {
     rules: [

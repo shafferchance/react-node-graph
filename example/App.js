@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-import ReactNodeGraph from '../index';
+const { useState } = React;
 
 const exampleGraph = {
   "nodes":[
@@ -29,8 +27,47 @@ const exampleGraph = {
   ]
 };
 
-export const App = () => {
+export const App = ({ addNode, removeNode }) => {
   const [state, setState] = useState(exampleGraph);
+
+  // addNode = (node, cb) => {
+  //   const nodes = ["nid", "type", "x", "y", "fields", "from_node", "from", "to_node", "to"];
+  //   const keys = Object.keys(node);
+  //   let verify = keys.filter(function (prop) {
+  //     if (nodes.indexOf(prop) !== -1) { return true; }
+  //   });
+  //   if (verify.length !== keys.length) { throw SyntaxError("Invalid node passed"); }
+
+  //   let nodes = [...state.nodes, {
+  //     nid: node.nid,
+  //     type: node.type,
+  //     x: node.x,
+  //     y: node.y,
+  //     fields: node.fields
+  //   }];
+  //   setState(old => {
+  //     return {
+  //     ...old,
+  //     "nodes": nodes
+  //     }
+  //   });
+  //   return cb("Success");
+  // }
+
+  // removeNode = (nid, cb) => {
+  //   let nodes = [...state.nodes];
+  //   nodes = nodes.filter(node => {
+  //     return node.nid !== nid;
+  //   });
+
+  //   setState(old => {
+  //     return {
+  //       ...old,
+  //       "nodes": nodes
+  //     }
+  //   });
+  //   return cb("Success");
+  // }
 
   const onNewConnector = (fromNode, fromPin, toNode, toPin) => {
     let connections = [...state.connections, {
@@ -79,15 +116,15 @@ export const App = () => {
     console.log(`node deselected:`, nid);
   }
 
-  return <ReactNodeGraph
-            data={state}
-            onNodeMove={(nid, pos) => onNodeMove(nid, pos)}
-            onNodeStartMove={nid => onNodeStartMove(nid)}
-            onNewConnector={(n1, o, n2, i) => onNewConnector(n1, o, n2, i)}
-            onRemoveConnector={connector => onRemoveConnector(connector)}
-            onNodeSelect={nid => handleNodeSelect(nid)}
-            onNodeDeselect={nid => handleNodeDeselect(nid)}
-         />;
+  return React.createElement(ReactNodeGraphHook,{
+            data: state,
+            onNodeMove: (nid, pos) => onNodeMove(nid, pos),
+            onNodeStartMove: nid => onNodeStartMove(nid),
+            onNewConnector: (n1, o, n2, i) => onNewConnector(n1, o, n2, i),
+            onRemoveConnector: connector => onRemoveConnector(connector),
+            onNodeSelect: nid => handleNodeSelect(nid),
+            onNodeDeselect: nid => handleNodeDeselect(nid)
+         }, null);
 }
 
 export default App;
