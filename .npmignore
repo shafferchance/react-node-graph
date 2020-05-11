@@ -3,5 +3,5 @@ src
 example
 lib
 /rollup.*
-index.js
+./index.js
 _config.yml
