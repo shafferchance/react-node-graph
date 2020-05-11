@@ -4,18 +4,31 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 
 const NODE_ENV = process.env.NODE_ENV || "development";
-const outputFile = NODE_ENV === "production" ? "./build/prod.js" : "./build/dev.js";
 const externals = {react: 'React', 'react-dom': 'ReactDOM'};
 
 export default {
     input: "index.js",
     external: Object.keys(externals),
-    output: {
-        file: outputFile,
-        format: 'umd',
-        name: 'ReactNodeGraphHook',
-        globals: externals
-    },
+    output: [
+        {
+            file: "build/umd/index.js",
+            format: 'umd',
+            name: 'ReactNodeGraphHook',
+            globals: externals
+        },
+        {
+            file: "build/cjs/index.js",
+            format: 'cjs',
+            name: "ReactNodeGraphHook",
+            globals: externals
+        },
+        {
+            file: "build/esm/index.js",
+            format: "es",
+            name: "ReactNodeGraphHook",
+            globals: externals
+        }
+    ],
     plugins: [
         babel({
             exclude: "node_modules/**",

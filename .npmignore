@@ -1,3 +1,7 @@
 /webpack.*
 src
 example
+lib
+/rollup.*
+index.js
+_config.yml
