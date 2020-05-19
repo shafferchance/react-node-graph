@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useReducer } from 'react';
 import { computeOutOffsetByIndex, computeInOffsetByIndex } from './lib/Util';
 // import { SVGComponent } from './lib-hooks/svgComp-hooks';
 import Spline from './lib/Spline';
 import DragNode from './lib/Node';
+import { initPanState, pan, panReducer, startPan, zoom } from './lib/pan-zoom';
 
 const index = ({
     data,
@@ -11,40 +12,51 @@ const index = ({
     onNodeStartMove,
     onNodeSelect,
     onNewConnector,
-    onRemoveConnector
+    onRemoveConnector,
+    className
 }) => {
     const [dataS, setDataS] = useState(data);
     const [source, setSource] = useState([]);
     const [dragging, setDragging] = useState(false);
-    const [mousePos, setMousePos] = useState({x: 0, y: 0});
+    const [panning, setPanning] = useState(false);
 
+    const [mousePos, setMousePos] = useState({x: 0, y: 0});
+    const [{translateX, translateY, scale},
+                                setPanState] = useReducer(panReducer, initPanState);
+
+    const divParent = useRef();
     const svgRef = useRef();
 
     const onMouseMove = e => {
-        let [pX, pY] = [e.clientX, e.clientY];
-        e.stopPropagation();
-        e.preventDefault();
+        if (panning) {
+            e.preventDefault();
+            setPanState(pan(e));
+        } else {
+            let [pX, pY] = [e.clientX, e.clientY];
+            e.stopPropagation();
+            // e.preventDefault();
 
-        const svgRect = svgRef.current.getBoundingClientRect();
-        // console.log(svgRect);
-        setMousePos(old => {
-            return {
-                ...old,
-                ...{x: pX - svgRect.left, y: pY - svgRect.top}
-            }
-        });
+            const svgRect = svgRef.current.getBoundingClientRect();
+            // console.log(svgRect);
+            setMousePos(old => {
+                return {
+                    ...old,
+                    ...{x: pX - svgRect.left, y: pY - svgRect.top}
+                }
+            });
+        }
     }
 
     const onMouseUp = e => {
-        setDragging(false);
+        if (dragging) setDragging(false);
+        if (panning) setPanning(false);
     }
 
-    const handleNodeStart = nid => {
-        onNodeStartMove(nid);
-    }
-
-    const handleNodeStop = (nid, pos) => {
-        onNodeMove(nid, pos);
+    const onMouseWheel = e => {
+        if (e.deltaY !== 0 && divParent.current) {
+            const contain = divParent.current.getBoundingClientRect();
+            setPanState(zoom(e, contain));
+        }
     }
 
     const handleNodeMove = (idx, pos) => {
@@ -60,6 +72,14 @@ const index = ({
                 ...dataT
             }
         });
+    }
+
+    const handleNodeStart = nid => {
+        onNodeStartMove(nid);
+    }
+
+    const handleNodeStop = (nid, pos) => {
+        onNodeMove(nid, pos);
     }
 
     const handleStartConnector = (nid, outputIdx) => {
@@ -123,6 +143,17 @@ const index = ({
         }
     }
 
+    const onDownDetectMove = e => {
+        const target = e.target.nodeName === "svg" ? e.target.parentElement : e.target;
+        console.log(target);
+        if (target.getAttribute("data-pan") === null) {
+            return;
+        } else {
+            setPanning(true);
+            setPanState(startPan(e));
+        }
+    }
+
     let newConn = null;
     let i = 0;
 
@@ -144,10 +175,18 @@ const index = ({
 
     let splineIdx = 0;
 
+    // console.log(translateX, translateY, scale);
+
     return (
         <div className={dragging ? 'dragging' : ''} 
-              onMouseMove={onMouseMove}
-              onMouseUp={onMouseUp}
+            onMouseDown={onDownDetectMove}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onWheel={onMouseWheel}
+            ref={divParent}
+            style={{transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
+                    width: '100%', height: '100%'}}
+            data-pan={true}
         >
             {dataS.nodes.map(node => {
                 // console.log(node);
@@ -169,10 +208,10 @@ const index = ({
 
                             onNodeSelect={nid => handleNodeSelect(nid)}
                             onNodeDeselect={nid => handleNodeDeselect(nid)}
-                       />
+                    />
             })}
             <svg style={{position: 'absolute', height: "100%", width: "100%", zIndex: 9000}} 
-                 ref={svgRef}>
+                ref={svgRef}>
                 {data.connections.map(connector => {
                     // console.log(data);
                     // console.log(connector);

@@ -13,8 +13,14 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-font-smoothing: antialiased;
 	background: url('gridtile.png');
+	width: 98vw;
+	height: 100vh;
 }
 
+#reactroot { 
+	width: 100%;
+	height: 100%;
+}
 
 .node {
 	position: absolute; 
