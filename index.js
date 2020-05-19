@@ -182,7 +182,6 @@ const index = ({
             onMouseDown={onDownDetectMove}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
-            onWheel={onMouseWheel}
             ref={divParent}
             style={{transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
                     width: '100%', height: '100%'}}
