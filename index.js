@@ -209,8 +209,9 @@ const index = ({
                             onNodeDeselect={nid => handleNodeDeselect(nid)}
                     />
             })}
-            <svg style={{position: 'absolute', height: "100%", width: "100%", zIndex: 9000}} 
-                ref={svgRef}>
+            <svg style={{position: 'absolute', height: "100%", width: "100%", zIndex: 9000}}
+                 viewBox={`${translateX} ${translateY} 100 100`}
+                 ref={svgRef}>
                 {data.connections.map(connector => {
                     // console.log(data);
                     // console.log(connector);
