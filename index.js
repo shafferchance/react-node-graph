@@ -1,4 +1,4 @@
-import React, { useState, useRef, useReducer } from 'react';
+import React, { useState, useRef, useReducer, useEffect } from 'react';
 import { computeOutOffsetByIndex, computeInOffsetByIndex } from './lib/Util';
 // import { SVGComponent } from './lib-hooks/svgComp-hooks';
 import Spline from './lib/Spline';
@@ -7,6 +7,7 @@ import { initPanState, pan, panReducer, startPan, zoom } from './lib/pan-zoom';
 
 const index = ({
     data,
+    setData,
     onNodeDeselect,
     onNodeMove,
     onNodeStartMove,
@@ -26,6 +27,8 @@ const index = ({
 
     const divParent = useRef();
     const svgRef = useRef();
+
+    useEffect(() => setData !== undefined ? setData({...dataS}) : null, [dataS]);
 
     const onMouseMove = e => {
         if (panning) {
@@ -211,7 +214,7 @@ const index = ({
             })}
             <svg style={{position: 'absolute', height: "100%", width: "100%", zIndex: 9000}} 
                 ref={svgRef}>
-                {data.connections.map(connector => {
+                {dataS.connections.map(connector => {
                     // console.log(data);
                     // console.log(connector);
                     let fromNode = getNodeById(data.nodes, connector.from_node);
