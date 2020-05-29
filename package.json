@@ -31,6 +31,7 @@
     "scripts": {
         "start": "python -m http.server && rollup -c -w",
         "watch": "rollup -c -w",
-        "build": "rollup -c"
+        "build": "rollup -c",
+        "prepublish": "rollup -c"
     }
 }
