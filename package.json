@@ -1,6 +1,6 @@
 {
     "name": "react-node-graph-hook",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "main": "build/cjs/index.js",
     "module": "build/esm/index.js",
     "peerDependencies": {
