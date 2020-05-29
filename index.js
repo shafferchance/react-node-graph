@@ -390,7 +390,7 @@ export const CtrlNodeGraph = ({
 
     // console.log(dragging);
     if (dragging) {
-        let sourceNode = getNodeById(dataS.nodes, source[0]);
+        let sourceNode = getNodeById(data.nodes, source[0]);
         let connectorStart = computeOutOffsetByIndex(sourceNode.x, sourceNode.y, source[1]);
         let connectorEnd = {
             x: mousePos.x,
