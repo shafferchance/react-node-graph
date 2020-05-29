@@ -459,7 +459,7 @@ export const CtrlNodeGraph = ({
                             onRemove={() => handleRemoveConnector(connector)}
                     />
                 })}
-                {newConn}
+                { newConn }
             </svg>
         </div>
     );
